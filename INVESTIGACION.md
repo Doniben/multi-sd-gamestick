@@ -6,8 +6,13 @@
 
 - [x] 1.1 Identificar el chip exacto → **Rockchip RK3032** (confirmado con fotos de placa: repo `PEARLPALMS/game-stick-4k-lite-segam-m8`)
 - [x] 1.2 Verificar la RAM real → **256MB** (2 chips de 128MB, confirmado con fotos)
-- [ ] 1.3 Identificar la versión del kernel Linux en uso
-- [ ] 1.4 Tipo de puerto USB: ¿USB 2.0 Host o Micro USB OTG?
+- [x] 1.3 Versión del kernel → **No bloqueante**. GStickOS y SpectralElec traen su propio kernel precompilado para RK3032. No es necesario conocer la versión original.
+- [x] 1.4 Tipo de puerto USB → **USB-A Host** (confirmado: el receptor inalámbrico de mandos ya lo usa). Para agregar dongle Wi-Fi se necesita un **hub USB-A con alimentación externa propia** (el puerto del stick no da corriente suficiente para dos dispositivos). Buscar: "USB 2.0 Hub powered USB-A 4 port" con puerto de alimentación micro USB/USB-C independiente. ~$100–150 MXN en AliExpress.
+  ```
+  [Stick USB-A] → [Hub con alimentación propia] → Receptor mandos 2.4GHz
+                                                 → Dongle Wi-Fi MT7601U
+  [Cargador 5V] → [Hub puerto de alimentación]
+  ```
 - [x] 1.5 Capacidad de decodificación de video → **H264 por hardware vía Rockchip VPU** (moonlight-embedded tiene `src/video/rk.c` y `find_package(Rockchip)` específicamente para este chip)
 - [x] 1.6 Ranura microSD → **microSD intercambiable**, todo el sistema vive ahí. El chip solo tiene un bootloader mínimo soldado.
 
