@@ -33,25 +33,25 @@
 
 - [x] 3.1 ¿Moonlight Embedded corre en RK3032? → **Sí**. Tiene soporte explícito para Rockchip en su build system (`ROCKCHIP_FOUND`, `moonlight-rk` lib).
 - [x] 3.2 ¿H264 por hardware? → **Sí**, via Rockchip VPU, ya implementado en `moonlight-embedded`.
-- [ ] 3.3 Alternativa Parsec: ¿existe cliente Linux ARM funcional?
-- [ ] 3.4 GPU de la PC: ¿compatible con Sunshine (NVENC/AMF/QSV)?
-- [ ] 3.5 Latencia de red esperada según setup (Wi-Fi vs Ethernet)
+- [x] 3.3 Alternativa Parsec → **No**. Parsec no tiene cliente Linux ARM. Chiaki-ng existe pero solo para PS Remote Play. **Moonlight es la única opción para streaming desde PC.**
+- [ ] 3.4 GPU de la PC: ¿compatible con Sunshine (NVENC/AMF/QSV)? → **Pendiente: necesito saber qué GPU tiene tu PC**
+- [x] 3.5 Latencia de red → Wi-Fi 2.4GHz: 15–30ms (jugable pero no ideal). Ethernet USB: 1–5ms (óptimo). Wi-Fi 5GHz: 5–15ms (bueno). Recomendación: Ethernet USB si el router está cerca.
 
 ---
 
 ## Bloque 4: Conectividad
 
-- [ ] 4.1 ¿OTG Hub alimenta correctamente receptor + dongle Wi-Fi simultáneamente?
+- [ ] 4.1 ¿OTG Hub alimenta correctamente receptor + dongle Wi-Fi simultáneamente? → **Requiere prueba con hardware real**
 - [x] 4.2 Driver Wi-Fi → **GStickOS menciona explícitamente soporte para dongle Wi-Fi USB externo**. MT7601U tiene driver nativo en kernel Linux ≥4.x.
-- [ ] 4.3 Tipo físico del puerto USB del stick (para seleccionar el hub correcto)
+- [x] 4.3 Tipo físico del puerto USB → **USB-A** (ya resuelto en 1.4). Hub recomendado: USB-A hub powered con fuente propia.
 
 ---
 
 ## Bloque 5: SDs adicionales
 
-- [ ] 5.1 (SD-4 Música) ¿Existe interfaz MPD navegable con gamepad para ARM/TV?
-- [ ] 5.2 (SD-5 Karaoke) ¿UltraStar Deluxe tiene binarios ARM precompilados?
-- [ ] 5.3 (SD-6 Escritorio) ¿Chromium corre en RK3032 con 256MB RAM? — con solo 256MB real es muy improbable. Alternativas: NetSurf, Midori, o descartar esta SD.
+- [x] 5.1 (SD-4 Música) → **No necesita SD propia**. Kodi (SD-2) ya es reproductor de música completo con navegación gamepad. Fusionar con SD-2.
+- [x] 5.2 (SD-5 Karaoke) → **No hay binarios ARM precompilados**. Solo AppImage x86. Habría que compilar UltraStar desde fuente para ARM, esfuerzo alto para 256MB RAM. **Descartado o pospuesto a fase final.**
+- [x] 5.3 (SD-6 Escritorio) → **Chromium imposible con 256MB RAM**. NetSurf existe para ARM pero no corre YouTube ni sitios modernos. **Descartado — no vale el esfuerzo.**
 
 ---
 
