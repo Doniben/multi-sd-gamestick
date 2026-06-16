@@ -6,12 +6,13 @@
 
 | SD | Uso | Tamaño mínimo | Recomendado | Razón |
 |---|---|---|---|---|
-| SD-2 (Kodi/IPTV) | Sistema + listas M3U + caché | 4GB | **8GB** | El sistema ocupa ~2GB, Kodi + addons ~1GB, resto es caché de thumbnails |
+| SD-2 (Kodi/IPTV/Media) | Sistema + IPTV + películas + música local | 64GB | **128GB–256GB** | Sistema ~3GB, películas 1080p ~5GB c/u, discografía MP3 ~30–40GB, FLAC ~150GB+ |
 | SD-3 (Moonlight) | Sistema + Moonlight binario | 2GB | **4GB** | Solo necesita Linux mínimo + un binario. No almacena juegos, todo se transmite |
 
-**No necesitas 64GB.** Eso es para ROMs de juegos retro. Kodi transmite todo por internet y Moonlight transmite desde tu PC — ninguno almacena contenido localmente.
+**El stick soporta microSD hasta 256GB confirmado** (interfaz SDXC, teórico hasta 2TB). En archive.org hay backups de 128GB funcionando sin problema.
 
-Compra las más baratas que encuentres: clase 10 / U1 mínimo. Para Moonlight la velocidad de lectura importa poco (solo el boot).
+- SD-2: clase 10 / U1 mínimo. U3 o A1 recomendado si vas a reproducir muchos archivos simultáneamente.
+- SD-3: la más barata clase 10 que encuentres.
 
 ---
 
@@ -21,10 +22,10 @@ Compra las más baratas que encuentres: clase 10 / U1 mínimo. Para Moonlight la
 |---|---|---|---|
 | 1 | Hub USB-A con alimentación | AuviPal 3-Port o similar con puerto de poder | $150–200 |
 | 2 | Dongle Wi-Fi USB | MediaTek MT7601U | $50–80 |
-| 3 | MicroSD 8GB (para Kodi) | Cualquier clase 10 | $50–80 |
+| 3 | MicroSD 128GB (para Kodi + media) | SanDisk Ultra / Kingston clase 10 U1 | $180–250 |
 | 4 | MicroSD 4GB (para Moonlight) | Cualquier clase 10 | $40–60 |
 | 5 | Cargador USB 5V extra (para el hub) | Cualquier cargador de celular | $0 (ya tienes uno) |
-| | **Total** | | **~$290–420 MXN** |
+| | **Total** | | **~$420–590 MXN** |
 
 ---
 
@@ -112,7 +113,48 @@ udhcpc -i wlan0
    - O todas: `https://iptv-org.github.io/iptv/index.m3u`
 4. Reiniciar Kodi → aparecerán canales en **TV → Channels**
 
-### Paso 7 — Verificar navegación con gamepad
+### Paso 7 — Copiar tu biblioteca de películas y música
+
+La microSD tiene dos particiones. La segunda (datos) es donde va tu contenido:
+
+```bash
+# Desde tu PC, montar la SD (ya flasheada y funcionando) y copiar:
+
+# Opción A — Desde Windows/Linux directamente a la SD:
+# La partición de datos se monta como ext4. En Windows usar Ext2Fsd o WSL para acceder.
+# Crear carpetas:
+mkdir -p /media/sdcard/storage/peliculas
+mkdir -p /media/sdcard/storage/musica
+
+# Copiar tus archivos:
+cp -r /ruta/a/tus/peliculas/* /media/sdcard/storage/peliculas/
+cp -r /ruta/a/tu/musica/* /media/sdcard/storage/musica/
+
+# Opción B — Por red (stick encendido con Wi-Fi):
+ssh root@<IP>
+mkdir -p /storage/peliculas /storage/musica
+
+# Desde tu PC:
+scp -r ./peliculas/* root@<IP>:/storage/peliculas/
+scp -r ./musica/* root@<IP>:/storage/musica/
+# (Para archivos grandes, rsync es mejor):
+rsync -avP ./peliculas/ root@<IP>:/storage/peliculas/
+rsync -avP ./musica/ root@<IP>:/storage/musica/
+```
+
+### Paso 8 — Configurar biblioteca en Kodi
+
+1. Abrir Kodi → **Settings → Media → Library**
+2. **Videos → Files → Add videos** → Browse → seleccionar `/storage/peliculas/`
+   - "This directory contains": **Movies**
+   - Scraper: **The Movie Database** (descarga carátulas y sinopsis automáticamente)
+3. **Music → Files → Add music** → Browse → seleccionar `/storage/musica/`
+   - Kodi escaneará automáticamente tags ID3/metadata
+4. **Update Library** → esperar a que indexe todo
+
+Resultado: biblioteca con carátulas, sinopsis, búsqueda por género/año/artista, todo navegable con gamepad.
+
+### Paso 9 — Verificar navegación con gamepad
 
 El gamepad del stick se expone como joystick estándar Linux. Kodi lo reconoce automáticamente:
 - D-pad: navegar menús
