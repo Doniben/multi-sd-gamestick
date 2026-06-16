@@ -34,7 +34,7 @@
 - [x] 3.1 ¿Moonlight Embedded corre en RK3032? → **Sí**. Tiene soporte explícito para Rockchip en su build system (`ROCKCHIP_FOUND`, `moonlight-rk` lib).
 - [x] 3.2 ¿H264 por hardware? → **Sí**, via Rockchip VPU, ya implementado en `moonlight-embedded`.
 - [x] 3.3 Alternativa Parsec → **No**. Parsec no tiene cliente Linux ARM. Chiaki-ng existe pero solo para PS Remote Play. **Moonlight es la única opción para streaming desde PC.**
-- [ ] 3.4 GPU de la PC: ¿compatible con Sunshine (NVENC/AMF/QSV)? → **Pendiente: necesito saber qué GPU tiene tu PC**
+- [x] 3.4 GPU de la PC → **NVIDIA RTX A6000** (NVENC completo). Compatible al 100% con Sunshine. GPU profesional de gama alta — codificación H264/H265 por hardware sin problemas.
 - [x] 3.5 Latencia de red → Wi-Fi 2.4GHz: 15–30ms (jugable pero no ideal). Ethernet USB: 1–5ms (óptimo). Wi-Fi 5GHz: 5–15ms (bueno). Recomendación: Ethernet USB si el router está cerca.
 
 ---
@@ -57,6 +57,15 @@
 
 ## Bloque 6: Proceso de desarrollo
 
-- [ ] 6.1 Definir toolchain de compilación cruzada (Docker + Buildroot o QEMU + Debian ARM)
-- [ ] 6.2 Proceso para empaquetar cada SD como imagen reproducible
-- [ ] 6.3 Sistema de testing sin flashear SD física (emulación QEMU ARM)
+- [x] 6.1 Toolchain de compilación cruzada → **Dos caminos según la SD:**
+  - **SD-2 (Kodi)**: No requiere compilación. EmuELEC tiene soporte Rockchip (carpeta `projects/Rockchip/`). Se usa su build system basado en LibreELEC (`PROJECT=Rockchip DEVICE=... make`). Kodi ya viene incluido.
+  - **SD-3 (Moonlight)**: Requiere cross-compile. Moonlight Embedded necesita: `librockchip_mpp.so` + `rk_mpi.h` (Rockchip MPP), `libdrm`, `libevdev`, `libudev`, `opus`. Toolchain: Docker con `arm-linux-gnueabihf-gcc` o Buildroot con paquete custom. GStickOS ya provee un rootfs Linux funcional como base.
+- [x] 6.2 Proceso de empaquetado → **Imagen raw de SD con particiones:**
+  - Partición 1 (10MB offset): rootfs Linux (kernel + sistema)
+  - Partición 2 (138MB offset): datos (ROMs, configs, etc.)
+  - Se empaqueta con `dd` y se distribuye como `.img.gz`. El usuario flashea con Etcher.
+  - Referencia: `distro_cleanup.sh` de GStickOS muestra la estructura exacta.
+- [x] 6.3 Testing → **QEMU parcial, pero limitado:**
+  - Se puede emular ARM genérico con `qemu-system-arm` para verificar que el rootfs arranca y los servicios inician.
+  - **No se puede emular el Rockchip VPU** — la decodificación H264 por hardware solo se prueba en el stick real.
+  - Flujo práctico: QEMU para validar boot + servicios → flashear SD solo para pruebas de video/red.
