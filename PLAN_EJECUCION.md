@@ -165,6 +165,146 @@ El gamepad del stick se expone como joystick estándar Linux. Kodi lo reconoce a
 
 ---
 
+### Paso 10 — VPN WireGuard para canales colombianos (Caracol, RCN completo)
+
+Algunos canales colombianos (Caracol TV, Canal 1, Telepacífico) están geo-bloqueados y solo transmiten a IPs de Colombia. La solución: un túnel VPN WireGuard entre tu stick en México y un servidor tuyo en Colombia.
+
+**Arquitectura:**
+
+```
+[Stick en México] ──WireGuard tunnel──→ [Tu servidor en Colombia]
+       │                                        │
+       └── IP colombiana (10.0.0.2) ←───────────┘
+                    │
+                    ↓
+        Canales geo-bloqueados ven IP colombiana ✅
+```
+
+**WireGuard** porque: consume ~2MB RAM, zero-config después de la primera vez, reconecta automáticamente si pierde señal, latencia mínima (~1ms overhead).
+
+#### 10.1 — Configurar el SERVIDOR (tu VPS/instancia en Colombia)
+
+```bash
+# En el servidor (Ubuntu/Debian):
+apt install wireguard
+
+# Generar llaves del servidor:
+wg genkey | tee /etc/wireguard/server_private.key | wg pubkey > /etc/wireguard/server_public.key
+chmod 600 /etc/wireguard/server_private.key
+
+# Crear config del servidor:
+cat > /etc/wireguard/wg0.conf << 'EOF'
+[Interface]
+Address = 10.0.0.1/24
+ListenPort = 51820
+PrivateKey = <CONTENIDO_DE_server_private.key>
+
+# Habilitar NAT para que el stick salga con la IP del servidor:
+PostUp = iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE; sysctl -w net.ipv4.ip_forward=1
+PostDown = iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE
+
+[Peer]
+# El game stick
+PublicKey = <PUBLIC_KEY_DEL_STICK>
+AllowedIPs = 10.0.0.2/32
+EOF
+
+# Levantar:
+systemctl enable --now wg-quick@wg0
+```
+
+#### 10.2 — Configurar el CLIENTE (el game stick)
+
+```bash
+# En el stick por SSH:
+ssh root@<IP_STICK>
+
+# Generar llaves del cliente:
+wg genkey | tee /etc/wireguard/client_private.key | wg pubkey > /etc/wireguard/client_public.key
+
+# Crear config del cliente:
+cat > /etc/wireguard/wg0.conf << 'EOF'
+[Interface]
+Address = 10.0.0.2/24
+PrivateKey = <CONTENIDO_DE_client_private.key>
+# Solo rutear tráfico de streaming por la VPN (no todo):
+# Si quieres TODO por VPN: usar 0.0.0.0/0 en AllowedIPs del Peer
+DNS = 8.8.8.8
+
+[Peer]
+PublicKey = <PUBLIC_KEY_DEL_SERVIDOR>
+Endpoint = <IP_PUBLICA_SERVIDOR_COLOMBIA>:51820
+AllowedIPs = 0.0.0.0/0
+PersistentKeepalive = 25
+EOF
+
+# Levantar:
+wg-quick up wg0
+
+# Verificar que tienes IP colombiana:
+curl ifconfig.me
+# Debe mostrar la IP de tu servidor en Colombia
+```
+
+#### 10.3 — Autostart de WireGuard en el stick
+
+```bash
+# Para que se conecte automáticamente al encender:
+cat > /etc/init.d/S50wireguard << 'EOF'
+#!/bin/sh
+case "$1" in
+  start) wg-quick up wg0 ;;
+  stop) wg-quick down wg0 ;;
+esac
+EOF
+chmod +x /etc/init.d/S50wireguard
+```
+
+Con esto: enciendes el stick → se conecta al Wi-Fi → levanta WireGuard automáticamente → todo el tráfico sale por Colombia → canales geo-bloqueados funcionan.
+
+**El servidor solo necesita estar encendido.** No requiere acción manual de tu parte. El stick se conecta como cliente automáticamente.
+
+#### 10.4 — Listas IPTV con canales colombianos completos
+
+Con la VPN activa, puedes usar listas M3U de terceros que incluyen Caracol, RCN completo, etc. Fuentes para buscar:
+
+```bash
+# En Kodi, agregar una segunda lista M3U:
+# Settings → PVR IPTV Simple Client → M3U URL:
+# Opción: alojar tu propia lista en el servidor de Colombia:
+# https://TU_SERVIDOR_CO/iptv/colombia.m3u
+
+# O combinar la lista pública + tu lista privada:
+# En el servidor, crear un script que merge ambas:
+cat > /var/www/html/iptv/colombia.m3u << 'EOF'
+#EXTM3U
+#EXTINF:-1 group-title="Colombia",Caracol TV
+http://STREAM_URL_AQUI
+#EXTINF:-1 group-title="Colombia",RCN Television
+http://STREAM_URL_AQUI
+#EXTINF:-1 group-title="Colombia",Canal 1
+http://STREAM_URL_AQUI
+EOF
+# Las URLs de streams se obtienen de foros/comunidades IPTV
+# Se actualizan periódicamente porque cambian
+```
+
+**Nota**: las listas de terceros se caen/cambian frecuentemente. Puedes automatizar la actualización con un cron en el servidor que busque y valide los streams.
+
+#### 10.5 — Requisitos del servidor en Colombia
+
+| Recurso | Mínimo |
+|---|---|
+| RAM | 512MB (WireGuard usa ~2MB) |
+| CPU | 1 vCPU |
+| Ancho de banda | ~5 Mbps por stream 720p activo |
+| SO | Ubuntu 22.04+ / Debian 12+ |
+| Puerto abierto | UDP 51820 |
+
+Un VPS básico en Colombia (DigitalOcean, Vultr, o AWS Lightsail región no disponible — buscar proveedores locales colombianos como Ufinet, ColombiaHosting, o usar Oracle Cloud free tier si tiene región cercana).
+
+---
+
 ## SD-3: Moonlight (Game Streaming desde PC)
 
 ### Requisitos previos en tu PC
