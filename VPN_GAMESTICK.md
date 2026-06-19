@@ -139,6 +139,85 @@ Para cambiar de país: editar el script y cambiar `sweden.conf` por `colombia.co
 
 ---
 
+## Paso 5: Cambiar VPN desde el mando inalámbrico
+
+Kodi permite ejecutar scripts de bash desde botones del mando con `System.Exec()`.
+
+### 1. Crear el script toggle en el stick:
+
+```bash
+ssh root@<IP_STICK>
+
+cat > /storage/.config/vpn-toggle.sh << 'EOF'
+#!/bin/bash
+# Alterna entre Sweden, Colombia y sin VPN
+STATE_FILE="/storage/.config/wireguard/.vpn_state"
+WG_DIR="/storage/.config/wireguard"
+
+current=$(cat "$STATE_FILE" 2>/dev/null || echo "off")
+
+case "$current" in
+  off)
+    wg-quick up "$WG_DIR/sweden.conf" && echo "sweden" > "$STATE_FILE"
+    kodi-send --action="Notification(VPN, Suecia activada, 3000)"
+    ;;
+  sweden)
+    wg-quick down "$WG_DIR/sweden.conf"
+    wg-quick up "$WG_DIR/colombia.conf" && echo "colombia" > "$STATE_FILE"
+    kodi-send --action="Notification(VPN, Colombia activada, 3000)"
+    ;;
+  colombia)
+    wg-quick down "$WG_DIR/colombia.conf" && echo "off" > "$STATE_FILE"
+    kodi-send --action="Notification(VPN, Desconectada, 3000)"
+    ;;
+esac
+EOF
+chmod +x /storage/.config/vpn-toggle.sh
+```
+
+El script cicla: **Off → Suecia → Colombia → Off** y muestra una notificación en pantalla.
+
+### 2. Mapear un botón del mando al script:
+
+```bash
+mkdir -p /storage/.kodi/userdata/keymaps
+
+cat > /storage/.kodi/userdata/keymaps/vpn.xml << 'EOF'
+<keymap>
+  <global>
+    <gamepad>
+      <!-- Botón Select/Back del mando (ajustar según tu mando) -->
+      <guide>System.Exec("/storage/.config/vpn-toggle.sh")</guide>
+    </gamepad>
+    <keyboard>
+      <!-- También con F12 si conectas teclado -->
+      <f12>System.Exec("/storage/.config/vpn-toggle.sh")</f12>
+    </keyboard>
+  </global>
+</keymap>
+EOF
+```
+
+### 3. Identificar qué botón usar:
+
+Para saber qué nombre tiene cada botón de tu mando en Kodi:
+```bash
+# Activar log de botones en Kodi:
+kodi-send --action="ToggleDebug"
+# Presionar el botón que quieras mapear
+# Ver el log:
+tail -f /storage/.kodi/temp/kodi.log | grep "button"
+```
+
+El nombre que aparezca (ej: `guide`, `back`, `select`) es el que pones en el XML.
+
+### 4. Reiniciar Kodi para que tome el keymap:
+```bash
+systemctl restart kodi
+```
+
+---
+
 ## Notas
 
 - El stick tiene solo 256MB RAM. WireGuard usa ~2MB, no impacta.
