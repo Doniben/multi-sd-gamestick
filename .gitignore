@@ -1,0 +1,4 @@
+# Imágenes de firmware (demasiado grandes para git)
+*.zip
+*.img
+*.img.gz

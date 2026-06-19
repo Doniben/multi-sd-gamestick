@@ -53,8 +53,18 @@ Ver [PLAN_DESARROLLO.md](./PLAN_DESARROLLO.md) para el plan detallado de cada im
 ## Estado del proyecto
 
 - [x] Concepto definido
-- [ ] SD-2: Kodi + IPTV
+- [x] Hardware validado: hub USB + dongle Wi-Fi + receptor mandos funcionan juntos
+- [ ] SD-2: Kodi + IPTV → **EN PROGRESO** (imagen descargada, pendiente flasheo)
 - [ ] SD-3: Moonlight (game streaming)
-- [ ] SD-4: Música
-- [ ] SD-5: Karaoke
-- [ ] SD-6: Escritorio
+- [ ] SD-4: Música (fusionada con SD-2 via Kodi)
+- [ ] SD-5: Karaoke (pospuesto)
+- [ ] SD-6: Escritorio (descartado — 256MB RAM insuficiente)
+
+## Archivos del proyecto
+
+| Archivo | Contenido |
+|---|---|
+| [INVESTIGACION.md](./INVESTIGACION.md) | Research completo del hardware y software |
+| [PLAN_DESARROLLO.md](./PLAN_DESARROLLO.md) | Plan por cada SD |
+| [PLAN_EJECUCION.md](./PLAN_EJECUCION.md) | Pasos concretos con comandos |
+| [FLASHEO_SD2_MAC.md](./FLASHEO_SD2_MAC.md) | Guía de flasheo para macOS |
