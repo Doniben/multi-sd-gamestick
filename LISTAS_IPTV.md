@@ -27,6 +27,44 @@
 - **Repo:** https://github.com/myfriendqaz/IPTV2025
 - Fork del anterior con actualizaciones 2025
 
+### 5. ⚡ Sunstar16/MagisTV-AS-A-m3u-PLAYLIST (canales de Xuper TV / Magis TV)
+- **URL M3U directa:** `https://raw.githubusercontent.com/Sunstar16/MagisTV-AS-A-m3u-PLAYLIST/refs/heads/main/MagisTV%20-%20PLAYLIST.m3u`
+- **URL M3U+ (extendida):** `https://raw.githubusercontent.com/Sunstar16/MagisTV-AS-A-m3u-PLAYLIST/refs/heads/main/MagisTV%2B.m3u`
+- **EPG (guía de programación):** `https://raw.githubusercontent.com/Sunstar16/MagisTV-AS-A-m3u-PLAYLIST/refs/heads/main/MagisTV%20-%20EPG.xml`
+- **Repo:** https://github.com/Sunstar16/MagisTV-AS-A-m3u-PLAYLIST
+- Son los mismos canales que tiene la app **Xuper TV** (antes Magis TV)
+- Incluye canales de pago latinos: deportes, películas, series, etc.
+- **⚠️ REQUIERE VPN A SUECIA** para que funcionen los streams
+- **⚠️ Legalmente gris** — retransmite canales de pago sin autorización (bloqueado en Argentina)
+- Los links se actualizan periódicamente (86 commits)
+
+---
+
+## VPN gratuita para Suecia (necesaria para lista Magis TV)
+
+### Opción 1: Proton VPN Free (RECOMENDADA)
+- **Descarga:** https://protonvpn.com/free-vpn/
+- Sin límite de datos, sin anuncios
+- Sin tarjeta de crédito, sin registro de actividad
+- Plan gratuito: servidores en ~10 países (USA, Japón, Países Bajos, Polonia, Rumanía...)
+- **⚠️ Suecia NO está en el plan gratuito** — está en el plan Plus ($2.99/mes)
+- Alternativa: probar con servidor de Países Bajos o Polonia (a veces funciona)
+
+### Opción 2: Urban VPN (la que recomienda el repo)
+- Chrome: https://chromewebstore.google.com/detail/urban-vpn-proxy/eppiocemhmnlbhjplcgkofciiegomcon
+- Android: https://play.google.com/store/apps/details?id=com.vpn.free.hotspot.secure.vpnify
+- **Tiene servidor en Suecia gratis**
+- Menos confiable en privacidad que Proton, pero funciona para IPTV
+
+### Opción 3: Windscribe Free
+- **Descarga:** https://windscribe.com/download
+- 10GB/mes gratis, pero tiene servidor en Suecia en plan gratuito si confirmas email (+10GB)
+- App para Android disponible
+
+### En el Game Stick (Linux/Kodi):
+- La VPN más práctica sería configurar el **router** o usar un **DNS/proxy** ya que el stick no tiene soporte nativo para apps VPN
+- Alternativa: configurar VPN en tu PC/Mac y compartir la conexión al stick vía hotspot
+
 ---
 
 ## Cómo buscar en Telegram
