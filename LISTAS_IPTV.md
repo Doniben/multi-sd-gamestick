@@ -61,9 +61,12 @@
 - 10GB/mes gratis, pero tiene servidor en Suecia en plan gratuito si confirmas email (+10GB)
 - App para Android disponible
 
-### En el Game Stick (Linux/Kodi):
-- La VPN más práctica sería configurar el **router** o usar un **DNS/proxy** ya que el stick no tiene soporte nativo para apps VPN
-- Alternativa: configurar VPN en tu PC/Mac y compartir la conexión al stick vía hotspot
+### En el Game Stick (GStickOS/EmuELEC — WireGuard nativo):
+
+GStickOS está basado en EmuELEC/CoreELEC que **ya trae WireGuard en el kernel**.
+No necesitas instalar nada — solo copiar un archivo `.conf` vía SSH.
+
+Ver instrucciones completas en [VPN_GAMESTICK.md](./VPN_GAMESTICK.md)
 
 ---
 
